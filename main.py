@@ -20,16 +20,27 @@ import json
 # heroDict = getHeroDict()
 
 
+# ------------------------------------------------------
+# TO MODIFY
+# ------------------------------------------------------
+SEARCH_FOR_ME = False
+TARGET_PLAYER_NAME = ''
+USER_ID = ''
+ROLE_ID = ''
+FRIEND_USER_ID = ''
+FRIEND_ROLE_ID = ''
+
 headers = {
     'gameOpenId': '',
-    'gameRoleId': '',
     'openId': '',
     'token': '',
-    'userId': '',
+    'gameRoleId': ROLE_ID,
+    'userId': USER_ID
 }
 
-userId = headers['userId']
-roleId = headers['gameRoleId']
+targetUserId = USER_ID if SEARCH_FOR_ME else FRIEND_USER_ID
+targetRoleId = ROLE_ID if SEARCH_FOR_ME else FRIEND_ROLE_ID
+# ------------------------------------------------------
 
 
 def getGameDetails(gameSeq, relaySvr, gameSvr, battleType):
@@ -38,16 +49,21 @@ def getGameDetails(gameSeq, relaySvr, gameSvr, battleType):
         "relaySvr" : relaySvr,
         "gameSeq" : gameSeq,
         "gameSvr" : gameSvr,
-        "targetRoleId" : roleId,
+        "targetRoleId" : targetRoleId,
         "battleType" : battleType
     }
     r2 = requests.post(url2, headers=headers, json=request_data2)
     data = r2.json()['data']
 
     def isMyTeam(team):
-        for player in team:
-            if player['basicInfo']['isMe'] == True:
-                return True
+        if SEARCH_FOR_ME:
+            for player in team:
+                if player['basicInfo']['isMe'] == True:
+                    return True
+        else:
+            for player in team:
+                if player['basicInfo']['roleName'] == TARGET_PLAYER_NAME:
+                    return True
         return False
 
     result = { 'params': request_data2 }
@@ -81,8 +97,8 @@ while True:
 
     request_data = {
         "lastTime": f"{time_id}",
-        "friendUserId": userId,
-        "friendRoleId": roleId
+        "friendUserId": targetUserId,
+        "friendRoleId": targetRoleId
     }
     r = requests.post(url, headers=headers, json=request_data)
 
