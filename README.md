@@ -14,4 +14,5 @@ requests
 
 ## 涉及的URL
 访问战绩列表：https://kohcamp.qq.com/game/morebattlelist
+
 访问对局详情：https://kohcamp.qq.com/game/battledetail
